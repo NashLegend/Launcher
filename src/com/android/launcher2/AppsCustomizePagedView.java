@@ -69,7 +69,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * A simple callback interface which also provides the results of the task.
+ * A simple callback interface which also provides the results of the task..
+ * 
  */
 interface AsyncTaskCallback {
     void run(AppsCustomizeAsyncTask task, AsyncTaskPageData data);
@@ -235,7 +236,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     static final String TAG = "AppsCustomizePagedView";
 
     /**
-     * The different content types that this paged view can show.
+     * 内容类型
      */
     public enum ContentType {
         Applications,
@@ -276,7 +277,7 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
     private int mNumAppsPages;
     private int mNumWidgetPages;
 
-    // Relating to the scroll and overscroll effects
+    // 滚动相关
     Workspace.ZInterpolator mZInterpolator = new Workspace.ZInterpolator(0.5f);
     private static float CAMERA_DISTANCE = 6500;
     private static float TRANSITION_SCALE_FACTOR = 0.74f;
