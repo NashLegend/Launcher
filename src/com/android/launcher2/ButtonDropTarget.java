@@ -26,122 +26,125 @@ import android.widget.TextView;
 
 import com.android.launcher.R;
 
-
 /**
  * Implements a DropTarget.
  */
-public class ButtonDropTarget extends TextView implements DropTarget, DragController.DragListener {
+public class ButtonDropTarget extends TextView implements DropTarget,
+		DragController.DragListener {
 
-    protected final int mTransitionDuration;
+	protected final int mTransitionDuration;
 
-    protected Launcher mLauncher;
-    private int mBottomDragPadding;
-    protected TextView mText;
-    protected SearchDropTargetBar mSearchDropTargetBar;
+	protected Launcher mLauncher;
+	private int mBottomDragPadding;
+	protected TextView mText;
+	protected SearchDropTargetBar mSearchDropTargetBar;
 
-    /** Whether this drop target is active for the current drag */
-    protected boolean mActive;
+	/** 是否对于拖拽来说可用 */
+	protected boolean mActive;
 
-    /** The paint applied to the drag view on hover */
-    protected int mHoverColor = 0;
+	/** 拖过来时显示的颜色 */
+	protected int mHoverColor = 0;
 
-    public ButtonDropTarget(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
+	public ButtonDropTarget(Context context, AttributeSet attrs) {
+		this(context, attrs, 0);
+	}
 
-    public ButtonDropTarget(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+	public ButtonDropTarget(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
 
-        Resources r = getResources();
-        mTransitionDuration = r.getInteger(R.integer.config_dropTargetBgTransitionDuration);
-        mBottomDragPadding = r.getDimensionPixelSize(R.dimen.drop_target_drag_padding);
-    }
+		Resources r = getResources();
+		mTransitionDuration = r
+				.getInteger(R.integer.config_dropTargetBgTransitionDuration);
+		mBottomDragPadding = r
+				.getDimensionPixelSize(R.dimen.drop_target_drag_padding);
+	}
 
-    void setLauncher(Launcher launcher) {
-        mLauncher = launcher;
-    }
+	void setLauncher(Launcher launcher) {
+		mLauncher = launcher;
+	}
 
-    public boolean acceptDrop(DragObject d) {
-        return false;
-    }
+	public boolean acceptDrop(DragObject d) {
+		return false;
+	}
 
-    public void setSearchDropTargetBar(SearchDropTargetBar searchDropTargetBar) {
-        mSearchDropTargetBar = searchDropTargetBar;
-    }
+	public void setSearchDropTargetBar(SearchDropTargetBar searchDropTargetBar) {
+		mSearchDropTargetBar = searchDropTargetBar;
+	}
 
-    protected Drawable getCurrentDrawable() {
-        Drawable[] drawables = getCompoundDrawables();
-        for (int i = 0; i < drawables.length; ++i) {
-            if (drawables[i] != null) {
-                return drawables[i];
-            }
-        }
-        return null;
-    }
+	protected Drawable getCurrentDrawable() {
+		Drawable[] drawables = getCompoundDrawables();
+		for (int i = 0; i < drawables.length; ++i) {
+			if (drawables[i] != null) {
+				return drawables[i];
+			}
+		}
+		return null;
+	}
 
-    public void onDrop(DragObject d) {
-    }
+	public void onDrop(DragObject d) {
+	}
 
-    public void onFlingToDelete(DragObject d, int x, int y, PointF vec) {
-        // Do nothing
-    }
+	public void onFlingToDelete(DragObject d, int x, int y, PointF vec) {
+		// Do nothing
+	}
 
-    public void onDragEnter(DragObject d) {
-        d.dragView.setColor(mHoverColor);
-    }
+	public void onDragEnter(DragObject d) {
+		d.dragView.setColor(mHoverColor);
+	}
 
-    public void onDragOver(DragObject d) {
-        // Do nothing
-    }
+	public void onDragOver(DragObject d) {
+		// Do nothing
+	}
 
-    public void onDragExit(DragObject d) {
-        d.dragView.setColor(0);
-    }
+	public void onDragExit(DragObject d) {
+		d.dragView.setColor(0);
+	}
 
-    public void onDragStart(DragSource source, Object info, int dragAction) {
-        // Do nothing
-    }
+	public void onDragStart(DragSource source, Object info, int dragAction) {
+		// Do nothing
+	}
 
-    public boolean isDropEnabled() {
-        return mActive;
-    }
+	public boolean isDropEnabled() {
+		return mActive;
+	}
 
-    public void onDragEnd() {
-        // Do nothing
-    }
+	public void onDragEnd() {
+		// Do nothing
+	}
 
-    @Override
-    public void getHitRect(android.graphics.Rect outRect) {
-        super.getHitRect(outRect);
-        outRect.bottom += mBottomDragPadding;
-    }
+	@Override
+	public void getHitRect(android.graphics.Rect outRect) {
+		super.getHitRect(outRect);
+		outRect.bottom += mBottomDragPadding;
+	}
 
-    Rect getIconRect(int itemWidth, int itemHeight, int drawableWidth, int drawableHeight) {
-        DragLayer dragLayer = mLauncher.getDragLayer();
+	Rect getIconRect(int itemWidth, int itemHeight, int drawableWidth,
+			int drawableHeight) {
+		DragLayer dragLayer = mLauncher.getDragLayer();
 
-        // Find the rect to animate to (the view is center aligned)
-        Rect to = new Rect();
-        dragLayer.getViewRectRelativeToSelf(this, to);
-        int width = drawableWidth;
-        int height = drawableHeight;
-        int left = to.left + getPaddingLeft();
-        int top = to.top + (getMeasuredHeight() - height) / 2;
-        to.set(left, top, left + width, top + height);
+		// Find the rect to animate to (the view is center aligned)
+		Rect to = new Rect();
+		dragLayer.getViewRectRelativeToSelf(this, to);
+		int width = drawableWidth;
+		int height = drawableHeight;
+		int left = to.left + getPaddingLeft();
+		int top = to.top + (getMeasuredHeight() - height) / 2;
+		to.set(left, top, left + width, top + height);
 
-        // Center the destination rect about the trash icon
-        int xOffset = (int) -(itemWidth - width) / 2;
-        int yOffset = (int) -(itemHeight - height) / 2;
-        to.offset(xOffset, yOffset);
+		// Center the destination rect about the trash icon
+		int xOffset = (int) -(itemWidth - width) / 2;
+		int yOffset = (int) -(itemHeight - height) / 2;
+		to.offset(xOffset, yOffset);
 
-        return to;
-    }
+		return to;
+	}
 
-    @Override
-    public DropTarget getDropTargetDelegate(DragObject d) {
-        return null;
-    }
+	@Override
+	public DropTarget getDropTargetDelegate(DragObject d) {
+		return null;
+	}
 
-    public void getLocationInDragLayer(int[] loc) {
-        mLauncher.getDragLayer().getLocationInDragLayer(this, loc);
-    }
+	public void getLocationInDragLayer(int[] loc) {
+		mLauncher.getDragLayer().getLocationInDragLayer(this, loc);
+	}
 }

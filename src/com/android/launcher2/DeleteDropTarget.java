@@ -219,17 +219,18 @@ public class DeleteDropTarget extends ButtonDropTarget {
         ItemInfo item = (ItemInfo) d.dragInfo;
 
         if (isAllAppsApplication(d.dragSource, item)) {
-            // Uninstall the application if it is being dragged from AppsCustomize
+            // 卸载
             mLauncher.startApplicationUninstallActivity((ApplicationInfo) item);
         } else if (isWorkspaceOrFolderApplication(d)) {
+        	//删除图标
             LauncherModel.deleteItemFromDatabase(mLauncher, item);
         } else if (isWorkspaceFolder(d)) {
-            // Remove the folder from the workspace and delete the contents from launcher model
+            // 删除文件夹图标
             FolderInfo folderInfo = (FolderInfo) item;
             mLauncher.removeFolder(folderInfo);
             LauncherModel.deleteFolderContentsFromDatabase(mLauncher, folderInfo);
         } else if (isWorkspaceOrFolderWidget(d)) {
-            // Remove the widget from the workspace
+            // 删除插件
             mLauncher.removeAppWidget((LauncherAppWidgetInfo) item);
             LauncherModel.deleteItemFromDatabase(mLauncher, item);
 
