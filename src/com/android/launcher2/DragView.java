@@ -240,6 +240,7 @@ public class DragView extends View {
 
     /**
      * Create a window containing this view and show it.
+     * 将view添加至Layer
      *
      * @param windowToken obtained from v.getWindowToken() from one of your views
      * @param touchX the x coordinate the user touched in DragLayer coordinates
