@@ -114,7 +114,7 @@ public class DragController {
 
 	private int mLastTouch[] = new int[2];
 	private long mLastTouchUpTime = -1;
-	private int mDistanceSinceScroll = 0;
+	private int mDistanceSinceScroll = 0;// 上次滚动停止后，手指移动的距离
 
 	private int mTmpPoint[] = new int[2];
 	private Rect mDragLayerRect = new Rect();
@@ -406,7 +406,7 @@ public class DragController {
 	}
 
 	/**
-	 * 只要在drag view被清除的动作在endDrag()方法中被推迟的时候才执行。 换句话说，拖动执行完毕，而动画没有执行完毕，这个时候drag
+	 * 只有在drag view被清除的动作在endDrag()方法中被推迟的时候才执行。 换句话说，拖动执行完毕，而动画没有执行完毕，这个时候drag
 	 * view不会被清除，listener不会执行onDragEnd，而是等到动画执行完毕
 	 */
 	void onDeferredEndDrag(DragView dragView) {
@@ -549,7 +549,7 @@ public class DragController {
 		}
 		mLastDropTarget = dropTarget;
 
-		// 在滚动了一次之后，触摸点仍然在滚动区域里，这时不应该再次滚动。而是需要移动一点点小动作来触发再次滚动。或者等待一小会
+		// 在滚动了一次之后，触摸点仍然在滚动区域里，这时不应该再次滚动。而是需要移动一点点小动作来触发再次滚动。或者等待一小会。
 		// 举例，在workspace移动图标到左侧的时候，手指一直保持在左侧，桌面不会一直右滚的
 		final int slop = ViewConfiguration.get(mLauncher)
 				.getScaledWindowTouchSlop();
@@ -560,6 +560,8 @@ public class DragController {
 		final int delay = mDistanceSinceScroll < slop ? RESCROLL_DELAY
 				: SCROLL_DELAY;
 
+		// 进入可滚动区域后仍然要等待一会儿以后再滚动。
+		// 在滚动之前进入了不滚动区域，则取消滚动
 		if (x < mScrollZone) {
 			if (mScrollState == SCROLL_OUTSIDE_ZONE) {
 				mScrollState = SCROLL_WAITING_IN_ZONE;
@@ -774,28 +776,28 @@ public class DragController {
 	}
 
 	/**
-	 * Sets the drag listner which will be notified when a drag starts or ends.
+	 * 添加拖动侦听器
 	 */
 	public void addDragListener(DragListener l) {
 		mListeners.add(l);
 	}
 
 	/**
-	 * Remove a previously installed drag listener.
+	 * 删除拖动侦听器
 	 */
 	public void removeDragListener(DragListener l) {
 		mListeners.remove(l);
 	}
 
 	/**
-	 * Add a DropTarget to the list of potential places to receive drop events.
+	 * 添加有可能接收放下事件的target
 	 */
 	public void addDropTarget(DropTarget target) {
 		mDropTargets.add(target);
 	}
 
 	/**
-	 * Don't send drop events to <em>target</em> any more.
+	 * target将不再接收放下事件
 	 */
 	public void removeDropTarget(DropTarget target) {
 		mDropTargets.remove(target);
@@ -823,7 +825,7 @@ public class DragController {
 	}
 
 	/**
-	 * Set which view scrolls for touch events near the edge of the screen.
+	 * 拖动拖动到连上的时候要滚动的view，一般是workspace什么的
 	 */
 	public void setScrollView(View v) {
 		mScrollView = v;
@@ -833,6 +835,9 @@ public class DragController {
 		return mDragObject.dragView;
 	}
 
+	/**
+	 * 用来滚动scrollview通常也就是桌面的
+	 */
 	private class ScrollRunnable implements Runnable {
 		private int mDirection;
 
@@ -852,9 +857,7 @@ public class DragController {
 				mLauncher.getDragLayer().onExitScrollArea();
 
 				if (isDragging()) {
-					// Force an update so that we can requeue the scroller if
-					// necessary
-					// 貌似是如果手指停止了还未抬起，那么仍然要处理
+					// 如果手指停止了还未抬起，那么仍然要处理
 					forceMoveEvent();
 				}
 			}

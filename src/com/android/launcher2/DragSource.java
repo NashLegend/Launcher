@@ -21,8 +21,7 @@ import android.view.View;
 import com.android.launcher2.DropTarget.DragObject;
 
 /**
- * Interface defining an object that can originate a drag.
- *
+ * 发起拖动的对象的接口
  */
 public interface DragSource {
     /**

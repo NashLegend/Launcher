@@ -903,7 +903,7 @@ public class DragLayer extends FrameLayout implements
 	}
 
 	/**
-	 * 退出滚动区域后
+	 * 退出滚动区域后，仅仅是把mInScrollArea设为了false
 	 */
 	void onExitScrollArea() {
 		mInScrollArea = false;

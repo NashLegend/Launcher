@@ -25,45 +25,50 @@ import android.widget.LinearLayout;
 
 import com.android.launcher.R;
 
+/**
+ * 顾名思义，状态代理，按它会导致被代理view状态发生变化
+ * 
+ */
 public class DrawableStateProxyView extends LinearLayout {
 
-    private View mView;
-    private int mViewId;
+	private View mView;
+	private int mViewId;
 
-    public DrawableStateProxyView(Context context) {
-        this(context, null);
-    }
+	public DrawableStateProxyView(Context context) {
+		this(context, null);
+	}
 
-    public DrawableStateProxyView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
+	public DrawableStateProxyView(Context context, AttributeSet attrs) {
+		this(context, attrs, 0);
+	}
 
+	public DrawableStateProxyView(Context context, AttributeSet attrs,
+			int defStyle) {
+		super(context, attrs, defStyle);
 
-    public DrawableStateProxyView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+		TypedArray a = context.obtainStyledAttributes(attrs,
+				R.styleable.DrawableStateProxyView, defStyle, 0);
+		mViewId = a.getResourceId(
+				R.styleable.DrawableStateProxyView_sourceViewId, -1);
+		a.recycle();
 
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.DrawableStateProxyView,
-                defStyle, 0);
-        mViewId = a.getResourceId(R.styleable.DrawableStateProxyView_sourceViewId, -1);
-        a.recycle();
+		setFocusable(false);
+	}
 
-        setFocusable(false);
-    }
+	@Override
+	protected void drawableStateChanged() {
+		super.drawableStateChanged();
 
-    @Override
-    protected void drawableStateChanged() {
-        super.drawableStateChanged();
+		if (mView == null) {
+			View parent = (View) getParent();
+			mView = parent.findViewById(mViewId);
+		}
+		mView.setPressed(isPressed());
+		mView.setHovered(isHovered());
+	}
 
-        if (mView == null) {
-            View parent = (View) getParent();
-            mView = parent.findViewById(mViewId);
-        }
-        mView.setPressed(isPressed());
-        mView.setHovered(isHovered());
-    }
-
-    @Override
-    public boolean onHoverEvent(MotionEvent event) {
-        return false;
-    }
+	@Override
+	public boolean onHoverEvent(MotionEvent event) {
+		return false;
+	}
 }
