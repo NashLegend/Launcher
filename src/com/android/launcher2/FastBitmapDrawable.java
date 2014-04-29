@@ -16,6 +16,7 @@
 
 package com.android.launcher2;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -24,6 +25,10 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
+/**
+ * 暂时不知道是什么玩意。TODO
+ *
+ */
 class FastBitmapDrawable extends Drawable {
     private Bitmap mBitmap;
     private int mAlpha;
@@ -68,7 +73,8 @@ class FastBitmapDrawable extends Drawable {
         mPaint.setFilterBitmap(filterBitmap);
     }
 
-    public int getAlpha() {
+    @SuppressLint("Override")
+	public int getAlpha() {
         return mAlpha;
     }
 

@@ -29,9 +29,9 @@ import com.android.launcher.R;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
+// 反正本文件就是各种键盘侦听，不看也罢，谁还在用键盘啊
 /**
- * A keyboard listener we set on all the workspace icons.
+ * 在所有桌面icon上设置的键盘侦听
  */
 class IconKeyEventListener implements View.OnKeyListener {
     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -40,7 +40,7 @@ class IconKeyEventListener implements View.OnKeyListener {
 }
 
 /**
- * A keyboard listener we set on all the workspace icons.
+ * 在所有桌面icon上设置的键盘侦听
  */
 class FolderKeyEventListener implements View.OnKeyListener {
     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -49,7 +49,7 @@ class FolderKeyEventListener implements View.OnKeyListener {
 }
 
 /**
- * A keyboard listener we set on all the hotseat buttons.
+ * 在所有桌面底座icon上设置的键盘侦听
  */
 class HotseatIconKeyEventListener implements View.OnKeyListener {
     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -68,6 +68,10 @@ class AppsCustomizeTabKeyEventListener implements View.OnKeyListener {
     }
 }
 
+/**
+ * @author pan
+ *
+ */
 public class FocusHelper {
     /**
      * Private helper to get the parent TabHost in the view hiearchy.
