@@ -95,7 +95,7 @@ public class AppsCustomizeTabHost extends TabHost implements
 	}
 
 	/**
-	 * 建立tab host并创建必须的tab
+	 * 建立tab host，并创建必须的tab
 	 */
 	@Override
 	protected void onFinishInflate() {
@@ -140,8 +140,7 @@ public class AppsCustomizeTabHost extends TabHost implements
 				contentFactory));
 		setOnTabChangedListener(this);
 
-		// Setup the key listener to jump between the last tab view and the
-		// market icon
+		// 市场和tab内容间跳转的键盘侦听
 		AppsCustomizeTabKeyEventListener keyListener = new AppsCustomizeTabKeyEventListener();
 		View lastTab = tabs.getChildTabViewAt(tabs.getTabCount() - 1);
 		lastTab.setOnKeyListener(keyListener);
@@ -172,11 +171,7 @@ public class AppsCustomizeTabHost extends TabHost implements
 	}
 
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		// If we are mid transitioning to the workspace, then intercept touch
-		// events here so we
-		// can ignore them, otherwise we just let all apps handle the touch
-		// events.
-		// 正在执行动画，直接拦截
+		// 如果正在执行动画，直接拦截动作
 		if (mInTransition && mTransitioningToWorkspace) {
 			return true;
 		}
@@ -185,17 +180,12 @@ public class AppsCustomizeTabHost extends TabHost implements
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		// Allow touch events to fall through to the workspace if we are
-		// transitioning there
-		// 正在执行动画，什么也不做
+		// 如果正在执行动画，什么也不做
 		if (mInTransition && mTransitioningToWorkspace) {
 			return super.onTouchEvent(event);
 		}
 
-		// Intercept all touch events up to the bottom of the AppsCustomizePane
-		// so they do not fall
-		// through to the workspace and trigger showWorkspace()
-		//
+		// 触摸点在AppsCustomizePane底部以上的都要拦截，防止进入workspace界面
 		if (event.getY() < mAppsCustomizePane.getBottom()) {
 			return true;
 		}

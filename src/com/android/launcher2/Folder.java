@@ -348,7 +348,6 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
 
     /**
      * 按阅读顺序排列？从左到右，从上到下。用于从数据库里面读出来的时候放置对象用
-     * TODO
      */
     private void placeInReadingOrder(ArrayList<ShortcutInfo> items) {
         int maxX = 0;
@@ -572,7 +571,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
     }
 
-    //TODO
+    /**
+     * 向Folder添加ShortcutInfo
+     */
     protected boolean createAndAddShortcut(ShortcutInfo item) {
         final TextView textView =
             (TextView) mInflater.inflate(R.layout.application, this, false);
@@ -584,11 +585,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         textView.setOnClickListener(this);
         textView.setOnLongClickListener(this);
 
-        // We need to check here to verify that the given item's location isn't already occupied
-        // by another item.
+        // 检查这个地方是否被其他item占据
         if (mContent.getChildAt(item.cellX, item.cellY) != null || item.cellX < 0 || item.cellY < 0
                 || item.cellX >= mContent.getCountX() || item.cellY >= mContent.getCountY()) {
-            // This shouldn't happen, log it. 
+            // 其实不应该发生
             Log.e(TAG, "Folder order not properly persisted during bind");
             if (!findAndSetEmptyCells(item)) {
                 return false;
@@ -615,6 +615,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
     };
 
+    /**
+     * 返回是否v1位置比v2大
+     */
     boolean readingOrderGreaterThan(int[] v1, int[] v2) {
         if (v1[1] > v2[1] || (v1[1] == v2[1] && v1[0] > v2[0])) {
             return true;
@@ -623,6 +626,11 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
     }
 
+    /**
+     * TODO
+     * @param empty
+     * @param target
+     */
     private void realTimeReorder(int[] empty, int[] target) {
         boolean wrap;
         int startX;
@@ -667,6 +675,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
     }
 
+    /* 
+     * 拖动结束
+     */
     public void onDragOver(DragObject d) {
         float[] r = getDragViewVisualCenter(d.x, d.y, d.xOffset, d.yOffset, d.dragView, null);
         mTargetCell = mContent.findNearestArea((int) r[0], (int) r[1], 1, 1, mTargetCell);
@@ -680,9 +691,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         }
     }
 
-    // This is used to compute the visual center of the dragView. The idea is that
-    // the visual center represents the user's interpretation of where the item is, and hence
-    // is the appropriate point to use when determining drop location.
+    // 获得被拖动view的视觉中心点。用来表示view的位置以及放下的时候用这个点判断位置要放到哪个位置
     private float[] getDragViewVisualCenter(int x, int y, int xOffset, int yOffset,
             DragView dragView, float[] recycle) {
         float res[];
@@ -692,14 +701,13 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
             res = recycle;
         }
 
-        // These represent the visual top and left of drag view if a dragRect was provided.
-        // If a dragRect was not provided, then they correspond to the actual view left and
-        // top, as the dragRect is in that case taken to be the entire dragView.
-        // R.dimen.dragViewOffsetY.
+        // 如果有dragRect，这就是可见左上角。
+        // 如果没有dragRect，这代表view的实际左上角
         int left = x - xOffset;
         int top = y - yOffset;
 
         // In order to find the visual center, we shift by half the dragRect
+        // 这都要注释……
         res[0] = left + dragView.getDragRegion().width() / 2;
         res[1] = top + dragView.getDragRegion().height() / 2;
 
@@ -721,8 +729,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
     }
 
     public void onDragExit(DragObject d) {
-        // We only close the folder if this is a true drag exit, ie. not because a drop
-        // has occurred above the folder.
+        // 只有是一个真正的drag拖出才关闭文件夹，比如说，在文件夹上放下dragview不是退出drag
         if (!d.dragComplete) {
             mOnExitAlarm.setOnAlarmListener(mOnExitAlarmListener);
             mOnExitAlarm.setAlarm(ON_EXIT_CLOSE_DELAY);
@@ -737,9 +744,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
                 replaceFolderWithFinalItem();
             }
         } else {
-            // The drag failed, we need to return the item to the folder
+            // 拖动失败，将item还给folder。这是由Folder向外拖出时调用的
             mFolderIcon.onDrop(d);
 
+            //TODO
             // We're going to trigger a "closeFolder" which may occur before this item has
             // been added back to the folder -- this could cause the folder to be deleted
             if (mOnExitAlarm.alarmPending()) {
@@ -760,8 +768,7 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         mCurrentDragView = null;
         mSuppressOnAdd = false;
 
-        // Reordering may have occured, and we need to save the new item locations. We do this once
-        // at the end to prevent unnecessary database operations.
+        // 可能要重新排序，保存到数据库中
         updateItemLocationsInDatabase();
     }
 
@@ -803,6 +810,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         return null;
     }
 
+    /**
+     * 设置内容大小。CellLayout
+     */
     private void setupContentDimensions(int count) {
         ArrayList<View> list = getItemsInReadingOrder();
 
@@ -836,6 +846,9 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         return getItemCount() >= mMaxNumItems;
     }
 
+    /**
+     * 以图标为中心，中心对齐，比如缩放时要以中心对齐
+     */
     private void centerAboutIcon() {
         DragLayer.LayoutParams lp = (DragLayer.LayoutParams) getLayoutParams();
 
@@ -854,8 +867,10 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         int currentPage = mLauncher.getWorkspace().getCurrentPage();
         // In case the workspace is scrolling, we need to use the final scroll to compute
         // the folders bounds.
+        // 如果workspace正在滚动，就强制滚动到最后以计算最终的位置
         mLauncher.getWorkspace().setFinalScrollForPageChange(currentPage);
         // We first fetch the currently visible CellLayoutChildren
+        // 首先获取可见CellLayoutChildren
         CellLayout currentLayout = (CellLayout) mLauncher.getWorkspace().getChildAt(currentPage);
         ShortcutAndWidgetContainer boundingLayout = currentLayout.getShortcutsAndWidgets();
         Rect bounds = new Rect();
