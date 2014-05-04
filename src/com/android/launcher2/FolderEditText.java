@@ -28,6 +28,9 @@ public class FolderEditText extends EditText {
         mFolder = folder;
     }
 
+    /* 
+     * 在接收输入动作的任何方法之前执行，主要用于接收back事件以处理UI
+     */
     @Override
     public boolean onKeyPreIme(int keyCode, KeyEvent event) {
         // Catch the back button on the soft keyboard so that we can just close the activity
