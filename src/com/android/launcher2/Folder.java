@@ -876,14 +876,15 @@ public class Folder extends LinearLayout implements DragSource, View.OnClickList
         Rect bounds = new Rect();
         parent.getDescendantRectRelativeToSelf(boundingLayout, bounds);
         // We reset the workspaces scroll
+        // 强制重置workspace的滚动状态
         mLauncher.getWorkspace().resetFinalScrollForPageChange(currentPage);
 
-        // We need to bound the folder to the currently visible CellLayoutChildren
+        // 重新调整folder的边界，如果有需要的话，比如实际内容比folder要更大或者更小
         int left = Math.min(Math.max(bounds.left, centeredLeft),
                 bounds.left + bounds.width() - width);
         int top = Math.min(Math.max(bounds.top, centeredTop),
                 bounds.top + bounds.height() - height);
-        // If the folder doesn't fit within the bounds, center it about the desired bounds
+        // 如果实际内容比folder要更大或者更小，那么调整为实际大小
         if (width >= bounds.width()) {
             left = bounds.left + (bounds.width() - width) / 2;
         }
