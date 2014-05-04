@@ -593,7 +593,7 @@ public class Folder extends LinearLayout implements DragSource,
 	}
 
 	/**
-	 * 为什么是ShortcutInfo，ApplicationInfo呢？原来ApplicationInfo在进入会被归化为ShortcutInfo了
+	 * ApplicationInfo在进入会被归化为ShortcutInfo了，里面只有ShortcutInfo
 	 */
 	protected boolean findAndSetEmptyCells(ShortcutInfo item) {
 		int[] emptyCell = new int[2];
@@ -856,7 +856,7 @@ public class Folder extends LinearLayout implements DragSource,
 	}
 
 	/**
-	 * 设置内容大小。CellLayout
+	 * 设置显示内容面板CellLayout的大小
 	 */
 	private void setupContentDimensions(int count) {
 		ArrayList<View> list = getItemsInReadingOrder();
@@ -966,6 +966,10 @@ public class Folder extends LinearLayout implements DragSource,
 		return mFolderIconPivotY;
 	}
 
+	/**
+	 * @param count
+	 *            根据item数量设置显示面板CellLayout的大小和位置
+	 */
 	private void setupContentForNumItems(int count) {
 		setupContentDimensions(count);
 
@@ -995,6 +999,9 @@ public class Folder extends LinearLayout implements DragSource,
 		setMeasuredDimension(width, height);
 	}
 
+	/**
+	 * 重置item们的位置
+	 */
 	private void arrangeChildren(ArrayList<View> list) {
 		int[] vacant = new int[2];
 		if (list == null) {
@@ -1031,8 +1038,11 @@ public class Folder extends LinearLayout implements DragSource,
 		return mContent.getShortcutsAndWidgets().getChildAt(index);
 	}
 
+	/**
+	 * 文件夹关闭动画完成后的处理动作
+	 */
 	private void onCloseComplete() {
-		DragLayer parent = (DragLayer) getParent();
+		DragLayer parent = (DragLayer) getParent();// getParent竟然是DragLayer
 		if (parent != null) {
 			parent.removeView(this);
 		}
@@ -1054,8 +1064,10 @@ public class Folder extends LinearLayout implements DragSource,
 		mSuppressFolderDeletion = false;
 	}
 
+	/**
+	 * 用最后一个剩余的item代替当前folder显示在桌面上，这发生在Folder里面只有一个item的时候
+	 */
 	private void replaceFolderWithFinalItem() {
-		// Add the last remaining child to the workspace in place of the folder
 		Runnable onCompleteRunnable = new Runnable() {
 			@Override
 			public void run() {
@@ -1063,8 +1075,8 @@ public class Folder extends LinearLayout implements DragSource,
 						mInfo.container, mInfo.screen);
 
 				View child = null;
-				// Move the item from the folder to the workspace, in the
-				// position of the folder
+				// 将最后一个item从Folder移动到桌面上，与Folder一个位置。
+				// 但是在这个if块里面并没有实际移动，而仅仅是生成数据并放到了数据库中。
 				if (getItemCount() == 1) {
 					ShortcutInfo finalItem = mInfo.contents.get(0);
 					child = mLauncher.createShortcut(R.layout.application,
@@ -1074,7 +1086,7 @@ public class Folder extends LinearLayout implements DragSource,
 							mInfo.cellY);
 				}
 				if (getItemCount() <= 1) {
-					// Remove the folder
+					// 删除Folder
 					LauncherModel.deleteItemFromDatabase(mLauncher, mInfo);
 					cellLayout.removeView(mFolderIcon);
 					if (mFolderIcon instanceof DropTarget) {
@@ -1083,9 +1095,7 @@ public class Folder extends LinearLayout implements DragSource,
 					}
 					mLauncher.removeFolder(mInfo);
 				}
-				// We add the child after removing the folder to prevent both
-				// from existing at
-				// the same time in the CellLayout.
+				// 在删除文件夹后才添加最后一个item到桌面，这是为了防止在同一时间同一位置有两个item
 				if (child != null) {
 					mLauncher.getWorkspace().addInScreen(child,
 							mInfo.container, mInfo.screen, mInfo.cellX,
@@ -1095,6 +1105,7 @@ public class Folder extends LinearLayout implements DragSource,
 		};
 		View finalChild = getItemAt(0);
 		if (finalChild != null) {
+			//文件夹销毁动画
 			mFolderIcon.performDestroyAnimation(finalChild, onCompleteRunnable);
 		}
 		mDestroyed = true;
@@ -1106,6 +1117,7 @@ public class Folder extends LinearLayout implements DragSource,
 
 	// This method keeps track of the last item in the folder for the purposes
 	// of keyboard focus
+	// 按方向键时让最后一个Child获得焦点？
 	private void updateTextViewFocus() {
 		View lastChild = getItemAt(getItemCount() - 1);
 		getItemAt(getItemCount() - 1);
@@ -1120,7 +1132,7 @@ public class Folder extends LinearLayout implements DragSource,
 	public void onDrop(DragObject d) {
 		ShortcutInfo item;
 		if (d.dragInfo instanceof ApplicationInfo) {
-			// Came from all apps -- make a copy
+			// 如果是来自“所有程序”界面，那么复制这个item
 			item = ((ApplicationInfo) d.dragInfo).makeShortcut();
 			item.spanX = 1;
 			item.spanY = 1;
@@ -1130,6 +1142,7 @@ public class Folder extends LinearLayout implements DragSource,
 		// Dragged from self onto self, currently this is the only path
 		// possible, however
 		// we keep this as a distinct code path.
+		// 这个判断应该不可能出现别的情况，当前手动对象当然应该是这个d，这是过于谨慎的判断
 		if (item == mCurrentDragInfo) {
 			ShortcutInfo si = (ShortcutInfo) mCurrentDragView.getTag();
 			CellLayout.LayoutParams lp = (CellLayout.LayoutParams) mCurrentDragView
@@ -1146,6 +1159,7 @@ public class Folder extends LinearLayout implements DragSource,
 				mCurrentDragView.setVisibility(VISIBLE);
 			}
 			mItemsInvalidated = true;
+			//拖进来后重新设置Folder的大小
 			setupContentDimensions(getItemCount());
 			mSuppressOnAdd = true;
 		}
@@ -1160,8 +1174,8 @@ public class Folder extends LinearLayout implements DragSource,
 		// being set
 		if (mSuppressOnAdd)
 			return;
+		// 如果当前item不在Layout中，添加进来，如果需要，扩张一下Folder
 		if (!findAndSetEmptyCells(item)) {
-			// The current layout is full, can we expand it?
 			setupContentForNumItems(getItemCount() + 1);
 			findAndSetEmptyCells(item);
 		}
@@ -1209,10 +1223,16 @@ public class Folder extends LinearLayout implements DragSource,
 	public void onTitleChanged(CharSequence title) {
 	}
 
+	/**
+	 * 左到右，上到下，为阅读顺序
+	 */
 	public ArrayList<View> getItemsInReadingOrder() {
 		return getItemsInReadingOrder(true);
 	}
 
+	/**
+	 * 左到右，上到下，为阅读顺序
+	 */
 	public ArrayList<View> getItemsInReadingOrder(boolean includeCurrentDragItem) {
 		if (mItemsInvalidated) {
 			mItemsInReadingOrder.clear();
@@ -1232,10 +1252,16 @@ public class Folder extends LinearLayout implements DragSource,
 		return mItemsInReadingOrder;
 	}
 
+	/* 
+	 * 返回子控件在父控件上的坐标位置
+	 */
 	public void getLocationInDragLayer(int[] loc) {
 		mLauncher.getDragLayer().getLocationInDragLayer(this, loc);
 	}
 
+	/* 
+	 * 当TextEdit获得焦点，就进行编辑
+	 */
 	public void onFocusChange(View v, boolean hasFocus) {
 		if (v == mFolderName && hasFocus) {
 			startEditingFolderName();

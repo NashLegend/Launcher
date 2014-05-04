@@ -46,6 +46,7 @@ import com.android.launcher2.FolderInfo.FolderListener;
 import java.util.ArrayList;
 
 /**
+ * 桌面上表示Folder的一个图标，点击后会打开一个真正的Folder
  * An icon that can appear on in the workspace representing an {@link UserFolder}.
  */
 public class FolderIcon extends LinearLayout implements FolderListener {

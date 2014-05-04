@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import android.content.ContentValues;
 
 /**
- * 桌面上的文件夹，里面有有快捷方式或者应用图标
+ * 桌面上的文件夹，里面是应用程序快捷方式
  */
 class FolderInfo extends ItemInfo {
 
@@ -42,7 +42,7 @@ class FolderInfo extends ItemInfo {
 	}
 
 	/**
-	 * 添加一个app或者快捷方式（好像只有快捷方式）
+	 * 添加一个快捷方式
 	 * 
 	 * @param item
 	 */
