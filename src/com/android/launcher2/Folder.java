@@ -1260,7 +1260,7 @@ public class Folder extends LinearLayout implements DragSource,
 	}
 
 	/* 
-	 * 当TextEdit获得焦点，就进行编辑
+	 * 当TextEdit获得焦点，就进行编辑。
 	 */
 	public void onFocusChange(View v, boolean hasFocus) {
 		if (v == mFolderName && hasFocus) {
