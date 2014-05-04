@@ -5,6 +5,9 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.widget.EditText;
 
+/**
+ * 文件夹名称编辑框
+ */
 public class FolderEditText extends EditText {
 
     private Folder mFolder;
