@@ -25,6 +25,9 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.widget.ImageView;
 
+/**
+ * 绘制图标等view的按下什么的效果
+ */
 public class HolographicViewHelper {
 
     private final Canvas mTempCanvas = new Canvas();
@@ -39,6 +42,7 @@ public class HolographicViewHelper {
 
     /**
      * Generate the pressed/focused states if necessary.
+     * 图标按下或者获得焦点的高光效果
      */
     void generatePressedFocusedStates(ImageView v) {
         if (!mStatesUpdated && v != null) {
@@ -67,7 +71,7 @@ public class HolographicViewHelper {
     }
 
     /**
-     * Creates a copy of the original image.
+     * 复制原Image
      */
     private Bitmap createOriginalImage(ImageView v, Canvas canvas) {
         final Drawable d = v.getDrawable();
@@ -84,8 +88,7 @@ public class HolographicViewHelper {
     }
 
     /**
-     * Creates a new press state image which is the old image with a blue overlay.
-     * Responsibility for the bitmap is transferred to the caller.
+     * 产生按下时的蓝边高光效果
      */
     private Bitmap createPressImage(ImageView v, Canvas canvas) {
         final Drawable d = v.getDrawable();

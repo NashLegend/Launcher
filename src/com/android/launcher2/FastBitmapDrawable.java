@@ -26,8 +26,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 /**
- * 暂时不知道是什么玩意。TODO
- *
+ * 把它当成一个Drawable只不过预设了一些参数好了
  */
 class FastBitmapDrawable extends Drawable {
     private Bitmap mBitmap;

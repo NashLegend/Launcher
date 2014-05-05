@@ -31,7 +31,7 @@ import android.graphics.drawable.Drawable;
 import java.util.HashMap;
 
 /**
- * Cache of application icons.  Icons can be made from any thread.
+ * 缓存应用程序图标，图标有可能来自任何线程
  */
 public class IconCache {
     @SuppressWarnings("unused")

@@ -54,7 +54,7 @@ class ItemInfo {
 	long container = NO_ID;
 
 	/**
-	 * 所在屏幕
+	 * 所在屏幕index
 	 */
 	int screen = -1;
 

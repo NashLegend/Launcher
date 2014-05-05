@@ -58,6 +58,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Stack;
 
+/**
+ * 可顺序排列item的容器
+ */
 public class CellLayout extends ViewGroup {
     static final String TAG = "CellLayout";
 

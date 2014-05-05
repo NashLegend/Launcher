@@ -27,6 +27,9 @@ import android.widget.LinearLayout;
 
 import com.android.launcher.R;
 
+/**
+ * 搞图标按下效果的
+ */
 public class HolographicLinearLayout extends LinearLayout {
 
     private final HolographicViewHelper mHolographicHelper;

@@ -562,6 +562,7 @@ public class LauncherModel extends BroadcastReceiver {
         item.cellY = cellY;
         // We store hotseat items in canonical form which is this orientation invariant position
         // in the hotseat
+        // hotseatr item位置是方向无关的
         if (context instanceof Launcher && screen < 0 &&
                 container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
             item.screen = ((Launcher) context).getHotseat().getOrderInHotseat(cellX, cellY);

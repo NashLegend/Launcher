@@ -23,6 +23,9 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 
+/**
+ * 绘制拖动时图标轮廓高光效果
+ */
 public class HolographicOutlineHelper {
     private final Paint mHolographicPaint = new Paint();
     private final Paint mBlurPaint = new Paint();

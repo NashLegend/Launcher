@@ -21,6 +21,9 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+/**
+ * 图标轮廓
+ */
 public class HolographicImageView extends ImageView {
 
     private final HolographicViewHelper mHolographicHelper;
