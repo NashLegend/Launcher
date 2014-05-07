@@ -28,6 +28,9 @@ import android.view.ViewGroup;
 
 import com.android.launcher.R;
 
+/**
+ * 这啥
+ */
 public class InfoDropTarget extends ButtonDropTarget {
 
     private ColorStateList mOriginalTextColor;
@@ -71,6 +74,7 @@ public class InfoDropTarget extends ButtonDropTarget {
         // acceptDrop is called just before onDrop. We do the work here, rather than
         // in onDrop, because it allows us to reject the drop (by returning false)
         // so that the object being dragged isn't removed from the drag source.
+    	// 在onDrop之前执行，这样有机会在放下之前取消掉动作
         ComponentName componentName = null;
         if (d.dragInfo instanceof ApplicationInfo) {
             componentName = ((ApplicationInfo) d.dragInfo).componentName;
