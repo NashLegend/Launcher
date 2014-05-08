@@ -42,11 +42,18 @@ public class LauncherAnimUtils {
         }
     };
 
+    /**
+     * 添加到sAnimator中以便 Activity销毁时停止动画
+     * @param a
+     */
     public static void cancelOnDestroyActivity(Animator a) {
         sAnimators.add(a);
         a.addListener(sEndAnimListener);
     }
 
+    /**
+     * 中止并删除所有动画
+     */
     public static void onDestroyActivity() {
         HashSet<Animator> animators = new HashSet<Animator>(sAnimators);
         for (Animator a : animators) {

@@ -30,6 +30,9 @@ import com.android.launcher.R;
 
 import java.lang.ref.WeakReference;
 
+/**
+ * 整个app的application,主要负责一些广播和侦听的添加
+ */
 public class LauncherApplication extends Application {
 	public LauncherModel mModel;
 	public IconCache mIconCache;
