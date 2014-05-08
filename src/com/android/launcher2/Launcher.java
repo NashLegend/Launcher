@@ -114,7 +114,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Default launcher application.
+ * 桌面主界面Activity
  */
 public final class Launcher extends Activity
         implements View.OnClickListener, OnLongClickListener, LauncherModel.Callbacks,
