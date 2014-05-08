@@ -523,8 +523,10 @@ public class AppsCustomizePagedView extends PagedViewWithDraggableItems implemen
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
+    /**
+     * 获取插件和快捷方式列表并更新之
+     */
     public void onPackagesUpdated() {
-        // 获取插件和快捷方式列表
         mWidgets.clear();
         List<AppWidgetProviderInfo> widgets =
             AppWidgetManager.getInstance(mLauncher).getInstalledProviders();
