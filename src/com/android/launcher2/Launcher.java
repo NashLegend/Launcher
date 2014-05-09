@@ -247,7 +247,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	private boolean mPaused = true;
 	private boolean mRestoring;
-	private boolean mWaitingForResult;
+	private boolean mWaitingForResult;//比如用startActivityForResult打开一个activity
 	private boolean mOnResumeNeedsLoad;
 
 	// Keep track of whether the user has left launcher
@@ -450,6 +450,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		sPausedFromUserAction = true;
 	}
 
+	/**
+	 * 全局的非单个程序的图标：声音、搜索、市场什么的
+	 */
 	private void updateGlobalIcons() {
 		boolean searchVisible = false;
 		boolean voiceVisible = false;
@@ -592,6 +595,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		return mDragLayer;
 	}
 
+	/**
+	 * 加载workspace时是不同拖动的
+	 */
 	boolean isDraggingEnabled() {
 		// We prevent dragging when we are loading the workspace as it is
 		// possible to pick up a view
@@ -614,7 +620,8 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	/**
 	 * Returns whether we should delay spring loaded mode -- for shortcuts and
 	 * widgets that have a configuration step, this allows the proper animations
-	 * to run after other transitions.
+	 * to run after other transitions. 返回是否延迟spring loaded
+	 * mode。因为快捷方式和桌面插件有的在添加的时候会有一个配置的步骤。
 	 */
 	private boolean completeAdd(PendingAddArguments args) {
 		boolean result = false;
@@ -649,6 +656,8 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		// Launcher would not
 		// return to the workspace. Clearing mAddInfo.container here fixes this
 		// issue
+		// 如果在“All Apps”界面添加完了一个快捷方式并且关闭了屏幕。
+		// 那么屏幕将不会回到workspace界面。所以resetAddInfo()
 		resetAddInfo();
 		return result;
 	}
@@ -656,6 +665,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	@Override
 	protected void onActivityResult(final int requestCode,
 			final int resultCode, final Intent data) {
+		// 绑定桌面插件（添加插件后有的会配置，配置完后会进入此块）
 		if (requestCode == REQUEST_BIND_APPWIDGET) {
 			int appWidgetId = data != null ? data.getIntExtra(
 					AppWidgetManager.EXTRA_APPWIDGET_ID, -1) : -1;
@@ -1037,7 +1047,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Creates a view representing a shortcut.
+	 * 创建一个表示快捷方式的view
 	 * 
 	 * @param info
 	 *            The data structure describing the shortcut.
@@ -1051,8 +1061,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Creates a view representing a shortcut inflated from the specified
-	 * resource.
+	 * 创建一个表示快捷方式的view
 	 * 
 	 * @param layoutResId
 	 *            The id of the XML layout used to create the shortcut.
@@ -1072,7 +1081,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Add an application shortcut to the workspace.
+	 * 将应用快捷方式添加到workspace
 	 * 
 	 * @param data
 	 *            The intent describing the application.
@@ -1084,8 +1093,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		final int[] cellXY = mTmpAddItemCellCoordinates;
 		final CellLayout layout = getCellLayout(container, screen);
 
-		// First we check if we already know the exact location where we want to
-		// add this item.
+		// 先检查是否已经知道了快捷方式确切的位置
 		if (cellX >= 0 && cellY >= 0) {
 			cellXY[0] = cellX;
 			cellXY[1] = cellY;
@@ -1110,7 +1118,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Add a shortcut to the workspace.
+	 * 将快捷方式添加到workspace
 	 * 
 	 * @param data
 	 *            The intent describing the shortcut.
@@ -1131,15 +1139,13 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 		final View view = createShortcut(info);
 
-		// First we check if we already know the exact location where we want to
-		// add this item.
+		// 先检查是否已经知道了快捷方式确切的位置
 		if (cellX >= 0 && cellY >= 0) {
 			cellXY[0] = cellX;
 			cellXY[1] = cellY;
 			foundCellSpan = true;
 
-			// If appropriate, either create a folder or add to an existing
-			// folder
+			// 这种行为有可能导致添加一个文件夹或者添加到文件夹（图标位置重叠）
 			if (mWorkspace.createUserFolderIfNecessary(view, container, layout,
 					cellXY, 0, true, null, null)) {
 				return;
@@ -1151,14 +1157,16 @@ public final class Launcher extends Activity implements View.OnClickListener,
 				return;
 			}
 		} else if (touchXY != null) {
-			// when dragging and dropping, just find the closest free spot
+			// 如果正在拖放，找到拖放的最近的一个有空的点
 			int[] result = layout.findNearestVacantArea(touchXY[0], touchXY[1],
 					1, 1, cellXY);
 			foundCellSpan = (result != null);
 		} else {
+			// 如果什么位置信息都没有，直接找一个最靠开始的位置，比如（0,0），如果有的话
 			foundCellSpan = layout.findCellForSpan(cellXY, 1, 1);
 		}
 
+		// 没有空位了
 		if (!foundCellSpan) {
 			showOutOfSpaceMessage(isHotseatLayout(layout));
 			return;
@@ -1173,8 +1181,18 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 返回widget占据的空间(3x2)
+	 * 
+	 * @param context
+	 * @param component
+	 * @param minWidth
+	 * @param minHeight
+	 * @return
+	 */
 	static int[] getSpanForWidget(Context context, ComponentName component,
 			int minWidth, int minHeight) {
+		// ICS以后系统默认会给widget添加padding，开发者不用自己添加
 		Rect padding = AppWidgetHostView.getDefaultPaddingForWidget(context,
 				component, null);
 		// We want to account for the extra amount of padding that we are adding
@@ -1207,7 +1225,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Add a widget to the workspace.
+	 * 将widget添加到workspace.
 	 * 
 	 * @param appWidgetId
 	 *            The app widget id
@@ -1296,6 +1314,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 			launcherInfo.hostView.setVisibility(View.VISIBLE);
 			launcherInfo.notifyWidgetSizeChanged(this);
 
+			// 插件添加到桌面上
 			mWorkspace.addInScreen(launcherInfo.hostView, container, screen,
 					cellXY[0], cellXY[1], launcherInfo.spanX,
 					launcherInfo.spanY, isWorkspaceLocked());
@@ -1305,24 +1324,27 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		resetAddInfo();
 	}
 
+	/**
+	 * 锁屏解锁的广播接收器
+	 */
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			final String action = intent.getAction();
+			// 屏幕关闭
 			if (Intent.ACTION_SCREEN_OFF.equals(action)) {
 				mUserPresent = false;
 				mDragLayer.clearAllResizeFrames();
 				updateRunning();
 
-				// Reset AllApps to its initial state only if we are not in the
-				// middle of
-				// processing a multi-step drop
+				// 只有当不在multi-step drop时才将AllApps重置重始状态 ？？？
 				if (mAppsCustomizeTabHost != null
 						&& mPendingAddInfo.container == ItemInfo.NO_ID) {
 					mAppsCustomizeTabHost.reset();
 					showWorkspace(false);
 				}
 			} else if (Intent.ACTION_USER_PRESENT.equals(action)) {
+				// 屏幕解锁？
 				mUserPresent = true;
 				updateRunning();
 			}
@@ -1333,7 +1355,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	public void onAttachedToWindow() {
 		super.onAttachedToWindow();
 
-		// Listen for broadcasts related to user-presence
+		// 锁屏解锁广播
 		final IntentFilter filter = new IntentFilter();
 		filter.addAction(Intent.ACTION_SCREEN_OFF);
 		filter.addAction(Intent.ACTION_USER_PRESENT);
@@ -1355,6 +1377,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		updateRunning();
 	}
 
+	/**
+	 * workspace的visibility发生改变
+	 */
 	public void onWindowVisibilityChanged(int visibility) {
 		mVisible = visibility == View.VISIBLE;
 		updateRunning();
@@ -1398,6 +1423,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * widget更新通知
+	 */
 	private void sendAdvanceMessage(long delay) {
 		mHandler.removeMessages(ADVANCE_MSG);
 		Message msg = mHandler.obtainMessage(ADVANCE_MSG);
@@ -1405,6 +1433,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		mAutoAdvanceSentTime = System.currentTimeMillis();
 	}
 
+	/**
+	 * 切换update，不过啥是update
+	 */
 	private void updateRunning() {
 		boolean autoAdvanceRunning = mVisible && mUserPresent
 				&& !mWidgetsToAdvance.isEmpty();
@@ -1428,6 +1459,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * widget更新通知
+	 */
 	private final Handler mHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
@@ -1451,6 +1485,12 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	};
 
+	/**
+	 * 貌似是自动更新插件的
+	 * 
+	 * @param hostView
+	 * @param appWidgetInfo
+	 */
 	void addWidgetToAutoAdvanceIfNeeded(View hostView,
 			AppWidgetProviderInfo appWidgetInfo) {
 		if (appWidgetInfo == null || appWidgetInfo.autoAdvanceViewId == -1)
@@ -1463,6 +1503,11 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 停止插件自动更新
+	 * 
+	 * @param hostView
+	 */
 	void removeWidgetToAutoAdvance(View hostView) {
 		if (mWidgetsToAdvance.containsKey(hostView)) {
 			mWidgetsToAdvance.remove(hostView);
@@ -1470,11 +1515,19 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 删除appwidget数据什么的，在哪里删除view的？
+	 * 
+	 * @param launcherInfo
+	 */
 	public void removeAppWidget(LauncherAppWidgetInfo launcherInfo) {
 		removeWidgetToAutoAdvance(launcherInfo.hostView);
 		launcherInfo.hostView = null;
 	}
 
+	/**
+	 * 没有空位了放这劳什子了
+	 */
 	void showOutOfSpaceMessage(boolean isHotseatLayout) {
 		int strId = (isHotseatLayout ? R.string.hotseat_out_of_space
 				: R.string.out_of_space);
@@ -1489,6 +1542,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		return mModel;
 	}
 
+	/**
+	 * 关闭所有对话框，mWaitingForResult=false
+	 */
 	void closeSystemDialogs() {
 		getWindow().closeAllPanels();
 
@@ -1496,6 +1552,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		mWaitingForResult = false;
 	}
 
+	/* 
+	 * LaunchMode为singletop的activity的最顶端的时候，再次被调用，就执行这个……
+	 * @see android.app.Activity#onNewIntent(android.content.Intent)
+	 */
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -1517,6 +1577,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 					Folder openFolder = mWorkspace.getOpenFolder();
 					// In all these cases, only animate if we're already on home
 					mWorkspace.exitWidgetResizeMode();
+					// 如果已经在前台并且处于普通状态，那么跳转到默认屏幕界面
 					if (alreadyOnHome && mState == State.WORKSPACE
 							&& !mWorkspace.isTouchActive()
 							&& openFolder == null) {
@@ -1674,10 +1735,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		super.startActivityForResult(intent, requestCode);
 	}
 
-	/**
-	 * 搜索界面，delete Indicates that we want global search for this activity by
-	 * setting the globalSearch argument for {@link #startSearch} to true.
-	 */
+//	/**
+//	 * 搜索界面，delete Indicates that we want global search for this activity by
+//	 * setting the globalSearch argument for {@link #startSearch} to true.
+//	 */
 	// @Override
 	// public void startSearch(String initialQuery, boolean selectInitialQuery,
 	// Bundle appSearchData, boolean globalSearch) {
@@ -1701,10 +1762,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	// appSearchData, sourceBounds);
 	// }
 
-	/**
-	 * 打开搜索界面，百度应该就是接管了这个intent Starts the global search activity. This code is
-	 * a copied from SearchManager
-	 */
+//	/**
+//	 * 打开搜索界面，百度应该就是接管了这个intent 。Starts the global search activity. This code is
+//	 * a copied from SearchManager
+//	 */
 	// public void startGlobalSearch(String initialQuery,
 	// boolean selectInitialQuery, Bundle appSearchData, Rect sourceBounds) {
 	// final SearchManager searchManager =
@@ -1817,6 +1878,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		return mWorkspaceLoading || mWaitingForResult;
 	}
 
+	/**
+	 * 据说如果在“All Apps”界面添加完了一个快捷方式并且关闭了屏幕。 那么屏幕将不会回到workspace界面。所以resetAddInfo()
+	 */
 	private void resetAddInfo() {
 		mPendingAddInfo.container = ItemInfo.NO_ID;
 		mPendingAddInfo.screen = -1;
@@ -1847,7 +1911,8 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Process a shortcut drop.
+	 * Process a shortcut drop。
+	 * 从拖放添加快捷方式
 	 * 
 	 * @param componentName
 	 *            The name of the component
@@ -1877,6 +1942,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * Process a widget drop.
+	 * 从拖放添加widget
 	 * 
 	 * @param info
 	 *            The PendingAppWidgetInfo of the widget being added.
@@ -1945,6 +2011,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 添加快捷方式
+	 */
 	void processShortcut(Intent intent) {
 		// Handle case where user selected "Applications"
 		String applicationName = getResources().getString(
@@ -1965,6 +2034,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 设置壁纸请求
+	 */
 	void processWallpaper(Intent intent) {
 		startActivityForResult(intent, REQUEST_PICK_WALLPAPER);
 	}
