@@ -31,6 +31,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+/**
+ * 侦听添加快捷方式的广播
+ */
 public class InstallShortcutReceiver extends BroadcastReceiver {
     public static final String ACTION_INSTALL_SHORTCUT =
             "com.android.launcher.action.INSTALL_SHORTCUT";
@@ -117,6 +120,11 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * 真正的处理函数在此
+     * @param context
+     * @param pendingInfo
+     */
     private static void processInstallShortcut(Context context,
             PendingInstallShortcutInfo pendingInfo) {
         String spKey = LauncherApplication.getSharedPreferencesKey();
@@ -136,6 +144,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
 
             // Try adding to the workspace screens incrementally, starting at the default or center
             // screen and alternating between +1, -1, +2, -2, etc. (using ~ ceil(i/2f)*(-1)^(i-1))
+            // 从中间开始，一个一个尝试放下这个Shortcut,直到找到一个能的地方为止
             final int screen = Launcher.DEFAULT_SCREEN;
             for (int i = 0; i < (2 * Launcher.SCREEN_COUNT) + 1 && !found; ++i) {
                 int si = screen + (int) ((i / 2f) + 0.5f) * ((i % 2 == 1) ? 1 : -1);
@@ -146,8 +155,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
             }
         }
 
-        // We only report error messages (duplicate shortcut or out of space) as the add-animation
-        // will provide feedback otherwise
+        // 如果桌面上没有了空间或者在不允许重复的情况下该快捷方式已经存在，刚提示用户
         if (!found) {
             if (result[0] == INSTALL_SHORTCUT_NO_SPACE) {
                 Toast.makeText(context, context.getString(R.string.completely_out_of_space),
@@ -159,6 +167,19 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
         }
     }
 
+    /**
+     * 尝试将Shortcut添加到桌面并存储到数据库
+     * @param context
+     * @param data
+     * @param items
+     * @param name
+     * @param intent
+     * @param screen
+     * @param shortcutExists
+     * @param sharedPrefs
+     * @param result
+     * @return
+     */
     private static boolean installShortcut(Context context, Intent data, ArrayList<ItemInfo> items,
             String name, Intent intent, final int screen, boolean shortcutExists,
             final SharedPreferences sharedPrefs, int[] result) {
@@ -174,8 +195,7 @@ public class InstallShortcutReceiver extends BroadcastReceiver {
                         Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
                 }
 
-                // By default, we allow for duplicate entries (located in
-                // different places)
+                // 默认情况下是允许重复图标的，当然图标位置不能重复
                 boolean duplicate = data.getBooleanExtra(Launcher.EXTRA_SHORTCUT_DUPLICATE, true);
                 if (duplicate || !shortcutExists) {
                     // If the new app is going to fall into the same page as before, then just

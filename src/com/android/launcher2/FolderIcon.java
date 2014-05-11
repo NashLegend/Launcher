@@ -220,6 +220,9 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 			}
 		}
 
+		/**
+		 * 顾名思义就是做出一个接收拖动进来的icon的动作
+		 */
 		public void animateToAcceptState() {
 			if (mNeutralAnimator != null) {
 				mNeutralAnimator.cancel();
@@ -251,6 +254,9 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 			mAcceptAnimator.start();
 		}
 
+		/**
+		 * 顾名思义就是做出一个回复的普通状态的动作
+		 */
 		public void animateToNaturalState() {
 			if (mAcceptAnimator != null) {
 				mAcceptAnimator.cancel();
@@ -426,6 +432,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 		// after a configuration activity (ie. for a Shortcut being dragged from
 		// AllApps) we
 		// will not have a view to animate
+		// 不是很懂，回来再看。 TODO
 		if (animateView != null) {
 			DragLayer dragLayer = mLauncher.getDragLayer();
 			Rect from = new Rect();
@@ -436,6 +443,7 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 				Workspace workspace = mLauncher.getWorkspace();
 				// Set cellLayout and this to it's final state to compute final
 				// animation locations
+				// 将cellLayout和自己设置为最终的稳定状态以计算最终的动画位置
 				workspace.setFinalTransitionTransform((CellLayout) getParent()
 						.getParent());
 				float scaleX = getScaleX();
@@ -498,6 +506,11 @@ public class FolderIcon extends LinearLayout implements FolderListener {
 		return null;
 	}
 
+	/**
+	 * 绘制预览界面，也就是能从文件夹上看到其中几个程序
+	 * @param drawableSize
+	 * @param totalSize
+	 */
 	private void computePreviewDrawingParams(int drawableSize, int totalSize) {
 		if (mIntrinsicIconSize != drawableSize || mTotalWidth != totalSize) {
 			mIntrinsicIconSize = drawableSize;

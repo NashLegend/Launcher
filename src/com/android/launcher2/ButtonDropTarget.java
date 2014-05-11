@@ -27,7 +27,7 @@ import android.widget.TextView;
 import com.android.launcher.R;
 
 /**
- * Implements a DropTarget.
+ * 实现了DropTarget的按钮，比如有可能是删除按钮
  */
 public class ButtonDropTarget extends TextView implements DropTarget,
 		DragController.DragListener {

@@ -39,12 +39,15 @@ public class IconCache {
 
     private static final int INITIAL_ICON_CACHE_CAPACITY = 50;
 
+    /**
+     * 图标对象，包括一个图像和一个标题
+     */
     private static class CacheEntry {
         public Bitmap icon;
         public String title;
     }
 
-    private final Bitmap mDefaultIcon;
+    private final Bitmap mDefaultIcon;//默认图标
     private final LauncherApplication mContext;
     private final PackageManager mPackageManager;
     private final HashMap<ComponentName, CacheEntry> mCache =
@@ -60,6 +63,7 @@ public class IconCache {
         mIconDpi = activityManager.getLauncherLargeIconDensity();
 
         // need to set mIconDpi before getting default icon
+        // 在取得默认icon之前应该设置Icon的dpi
         mDefaultIcon = makeDefaultIcon();
     }
 
@@ -129,7 +133,7 @@ public class IconCache {
     }
 
     /**
-     * Remove any records for the supplied ComponentName.
+     * 删除对应ComponentName的图标
      */
     public void remove(ComponentName componentName) {
         synchronized (mCache) {
@@ -138,7 +142,7 @@ public class IconCache {
     }
 
     /**
-     * Empty out the cache.
+     * 清空缓存
      */
     public void flush() {
         synchronized (mCache) {
@@ -147,7 +151,7 @@ public class IconCache {
     }
 
     /**
-     * Fill in "application" with the icon and label for "info."
+     * 获得标题与图标
      */
     public void getTitleAndIcon(ApplicationInfo application, ResolveInfo info,
             HashMap<Object, CharSequence> labelCache) {

@@ -39,6 +39,9 @@ import com.android.launcher.R;
 /**
  * We will likely flesh this out later, to handle allow external apps to place widgets, but for now,
  * we just want to expose the action around for checking elsewhere.
+ * 本是要在这里直接搞这个玩意儿。
+ * 但是现在这东西是暴露出来可由外部调用了？？？
+ * 啥意思？本来想在这搞widget选择列表来着？结果没搞？
  */
 public class InstallWidgetReceiver {
     public static final String ACTION_INSTALL_WIDGET =
@@ -69,6 +72,7 @@ public class InstallWidgetReceiver {
     }
 
     /**
+     * 没用到过？
      * The ListAdapter which presents all the valid widgets that can be created for a given drop.
      */
     public static class WidgetListAdapter implements ListAdapter, DialogInterface.OnClickListener {

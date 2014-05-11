@@ -21,6 +21,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 
 /**
+ * 一个用于双向动画的类：比如淡入淡出
  * A convenience class for two-way animations, e.g. a fadeIn/fadeOut animation.
  * With a regular ValueAnimator, if you call reverse to show the 'out' animation, you'll get
  * a frame-by-frame mirror of the 'in' animation -- i.e., the interpolated values will
@@ -64,11 +65,11 @@ public class InterruptibleInOutAnimator {
         final float startValue = mFirstRun ? mOriginalFromValue :
                 ((Float) mAnimator.getAnimatedValue()).floatValue();
 
-        // Make sure it's stopped before we modify any values
+        // 如果它正在运行，那么停止动画
         cancel();
 
-        // TODO: We don't really need to do the animation if startValue == toValue, but
-        // somehow that doesn't seem to work, possibly a quirk of the animation framework
+        // 如果startValue == toValue那么我们实际上不需要有动画的，但是好像没用，可能是动画框架有点奇怪的问题
+        // 这……
         mDirection = direction;
 
         // Ensure we don't calculate a non-sensical duration

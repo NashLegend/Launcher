@@ -26,7 +26,7 @@ import android.widget.ImageView;
 import com.android.launcher.R;
 
 /**
- * 貌似并没有在任何地方被使用
+ * 貌似并没有在任何地方被直接使用，有可能是通过继承使用
  */
 public class HandleView extends ImageView {
 	private static final int ORIENTATION_HORIZONTAL = 1;
