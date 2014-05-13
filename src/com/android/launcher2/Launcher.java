@@ -247,7 +247,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	private boolean mPaused = true;
 	private boolean mRestoring;
-	private boolean mWaitingForResult;//比如用startActivityForResult打开一个activity
+	private boolean mWaitingForResult;// 比如用startActivityForResult打开一个activity
 	private boolean mOnResumeNeedsLoad;
 
 	// Keep track of whether the user has left launcher
@@ -1552,8 +1552,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		mWaitingForResult = false;
 	}
 
-	/* 
+	/*
 	 * LaunchMode为singletop的activity的最顶端的时候，再次被调用，就执行这个……
+	 * 
 	 * @see android.app.Activity#onNewIntent(android.content.Intent)
 	 */
 	@Override
@@ -1735,10 +1736,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		super.startActivityForResult(intent, requestCode);
 	}
 
-//	/**
-//	 * 搜索界面，delete Indicates that we want global search for this activity by
-//	 * setting the globalSearch argument for {@link #startSearch} to true.
-//	 */
+	// /**
+	// * 搜索界面，delete Indicates that we want global search for this activity by
+	// * setting the globalSearch argument for {@link #startSearch} to true.
+	// */
 	// @Override
 	// public void startSearch(String initialQuery, boolean selectInitialQuery,
 	// Bundle appSearchData, boolean globalSearch) {
@@ -1762,10 +1763,11 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	// appSearchData, sourceBounds);
 	// }
 
-//	/**
-//	 * 打开搜索界面，百度应该就是接管了这个intent 。Starts the global search activity. This code is
-//	 * a copied from SearchManager
-//	 */
+	// /**
+	// * 打开搜索界面，百度应该就是接管了这个intent 。Starts the global search activity. This code
+	// is
+	// * a copied from SearchManager
+	// */
 	// public void startGlobalSearch(String initialQuery,
 	// boolean selectInitialQuery, Bundle appSearchData, Rect sourceBounds) {
 	// final SearchManager searchManager =
@@ -1911,8 +1913,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Process a shortcut drop。
-	 * 从拖放添加快捷方式
+	 * Process a shortcut drop。 从拖放添加快捷方式
 	 * 
 	 * @param componentName
 	 *            The name of the component
@@ -1941,8 +1942,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Process a widget drop.
-	 * 从拖放添加widget
+	 * Process a widget drop. 从拖放添加widget
 	 * 
 	 * @param info
 	 *            The PendingAppWidgetInfo of the widget being added.
@@ -2041,17 +2041,27 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		startActivityForResult(intent, REQUEST_PICK_WALLPAPER);
 	}
 
+	/**
+	 * 桌面上添加文件夹
+	 * 
+	 * @param layout
+	 * @param container
+	 * @param screen
+	 * @param cellX
+	 * @param cellY
+	 * @return
+	 */
 	FolderIcon addFolder(CellLayout layout, long container, final int screen,
 			int cellX, int cellY) {
 		final FolderInfo folderInfo = new FolderInfo();
 		folderInfo.title = getText(R.string.folder_name);
 
-		// Update the model
+		// 更新数据
 		LauncherModel.addItemToDatabase(Launcher.this, folderInfo, container,
 				screen, cellX, cellY, false);
 		sFolders.put(folderInfo.id, folderInfo);
 
-		// Create the view
+		// 添加view到桌面
 		FolderIcon newFolder = FolderIcon.fromXml(R.layout.folder_icon, this,
 				layout, folderInfo, mIconCache);
 		mWorkspace.addInScreen(newFolder, container, screen, cellX, cellY, 1,
@@ -2063,6 +2073,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		sFolders.remove(folder.id);
 	}
 
+	/**
+	 * 发起修改壁纸请求
+	 */
 	private void startWallpaper() {
 		showWorkspace(true);
 		final Intent pickWallpaper = new Intent(Intent.ACTION_SET_WALLPAPER);
@@ -2098,6 +2111,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (event.getKeyCode()) {
+			//监听Home键？
 			case KeyEvent.KEYCODE_HOME:
 				return true;
 			case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -2120,8 +2134,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	@Override
 	public void onBackPressed() {
 		if (isAllAppsVisible()) {
+			//在“所有程序”界面，则返回workspace
 			showWorkspace(true);
 		} else if (mWorkspace.getOpenFolder() != null) {
+			//有Folder打开则关闭Folder
 			Folder openFolder = mWorkspace.getOpenFolder();
 			if (openFolder.isEditingName()) {
 				openFolder.dismissEditingName();
@@ -2129,6 +2145,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 				closeFolder();
 			}
 		} else {
+			//正在调整widget则退出调整
 			mWorkspace.exitWidgetResizeMode();
 
 			// Back button is a no-op here, but give at least some feedback for
@@ -2138,7 +2155,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Re-listen when widgets are reset.
+	 * 重视监听被重置的widget
 	 */
 	private void onAppWidgetReset() {
 		if (mAppWidgetHost != null) {
@@ -2147,7 +2164,8 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Launches the intent referred by the clicked shortcut.
+	 * 处理点击快捷方式、文件夹、"全部程序"按钮。
+	 * “全部程序”界面里面的点击事件在哪里处理呢？TODO
 	 * 
 	 * @param v
 	 *            The view representing the clicked shortcut.
@@ -2167,7 +2185,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 		Object tag = v.getTag();
 		if (tag instanceof ShortcutInfo) {
-			// Open shortcut
+			// 打开快捷方式对应的intent
 			final Intent intent = ((ShortcutInfo) tag).intent;
 			int[] pos = new int[2];
 			v.getLocationOnScreen(pos);
@@ -2182,10 +2200,12 @@ public final class Launcher extends Activity implements View.OnClickListener,
 			}
 		} else if (tag instanceof FolderInfo) {
 			if (v instanceof FolderIcon) {
+				//打开文件夹
 				FolderIcon fi = (FolderIcon) v;
 				handleFolderClick(fi);
 			}
 		} else if (v == mAllAppsButton) {
+			//显示或者不显示“全部程序”界面
 			if (isAllAppsVisible()) {
 				showWorkspace(true);
 			} else {
@@ -2198,12 +2218,13 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		// this is an intercepted event being forwarded from mWorkspace;
 		// clicking anywhere on the workspace causes the customization drawer to
 		// slide down
+		//TODO 啥意思
 		showWorkspace(true);
 		return false;
 	}
 
 	/**
-	 * Event handler for the search button
+	 * 处理搜索按钮点击事件，触发写在search_bar.xml
 	 * 
 	 * @param v
 	 *            The view that was clicked.
@@ -2243,6 +2264,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	/**
 	 * Event handler for the "grid" button that appears on the home screen,
 	 * which enters all apps mode.
+	 * 显示“所有程序”界面
 	 * 
 	 * @param v
 	 *            The view that was clicked.
@@ -2251,6 +2273,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		showAllApps(true);
 	}
 
+	/**
+	 * “所有程序”按钮按下
+	 * @param v
+	 */
 	public void onTouchDownAllAppsButton(View v) {
 		// Provide the same haptic feedback that the system offers for virtual
 		// keys.
@@ -2265,6 +2291,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 根据包名跳转到系统自带的应用程序信息界面
+	 * @param componentName
+	 */
 	void startApplicationDetailsActivity(ComponentName componentName) {
 		String packageName = componentName.getPackageName();
 		Intent intent = new Intent(
@@ -2275,6 +2305,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		startActivitySafely(null, intent, "startApplicationDetailsActivity");
 	}
 
+	/**
+	 * 卸载程序
+	 * @param appInfo
+	 */
 	void startApplicationUninstallActivity(ApplicationInfo appInfo) {
 		if ((appInfo.flags & ApplicationInfo.DOWNLOADED_FLAG) == 0) {
 			// System applications cannot be installed. For now, show a toast
@@ -2355,6 +2389,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 这么多if，想的太多了
+	 * @param folderIcon
+	 */
 	private void handleFolderClick(FolderIcon folderIcon) {
 		final FolderInfo info = folderIcon.getFolderInfo();
 		Folder openFolder = mWorkspace.getFolderForTag(info);
