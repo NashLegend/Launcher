@@ -519,6 +519,9 @@ public class AppsCustomizeTabHost extends TabHost implements
 		}
 	}
 
+	/**
+	 * 合适的时候清理后台view
+	 */
 	public void onTrimMemory() {
 		mContent.setVisibility(GONE);
 		// Clear the widget pages of all their subviews - this will trigger the

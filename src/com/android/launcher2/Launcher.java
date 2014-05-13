@@ -2111,7 +2111,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if (event.getAction() == KeyEvent.ACTION_DOWN) {
 			switch (event.getKeyCode()) {
-			//监听Home键？
+			// 监听Home键？
 			case KeyEvent.KEYCODE_HOME:
 				return true;
 			case KeyEvent.KEYCODE_VOLUME_DOWN:
@@ -2134,10 +2134,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	@Override
 	public void onBackPressed() {
 		if (isAllAppsVisible()) {
-			//在“所有程序”界面，则返回workspace
+			// 在“所有程序”界面，则返回workspace
 			showWorkspace(true);
 		} else if (mWorkspace.getOpenFolder() != null) {
-			//有Folder打开则关闭Folder
+			// 有Folder打开则关闭Folder
 			Folder openFolder = mWorkspace.getOpenFolder();
 			if (openFolder.isEditingName()) {
 				openFolder.dismissEditingName();
@@ -2145,7 +2145,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 				closeFolder();
 			}
 		} else {
-			//正在调整widget则退出调整
+			// 正在调整widget则退出调整
 			mWorkspace.exitWidgetResizeMode();
 
 			// Back button is a no-op here, but give at least some feedback for
@@ -2164,8 +2164,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * 处理点击快捷方式、文件夹、"全部程序"按钮。
-	 * “全部程序”界面里面的点击事件在哪里处理呢？TODO
+	 * 处理点击快捷方式、文件夹、"全部程序"按钮。 “全部程序”界面里面的点击事件在哪里处理呢？TODO
 	 * 
 	 * @param v
 	 *            The view representing the clicked shortcut.
@@ -2200,12 +2199,12 @@ public final class Launcher extends Activity implements View.OnClickListener,
 			}
 		} else if (tag instanceof FolderInfo) {
 			if (v instanceof FolderIcon) {
-				//打开文件夹
+				// 打开文件夹
 				FolderIcon fi = (FolderIcon) v;
 				handleFolderClick(fi);
 			}
 		} else if (v == mAllAppsButton) {
-			//显示或者不显示“全部程序”界面
+			// 显示或者不显示“全部程序”界面
 			if (isAllAppsVisible()) {
 				showWorkspace(true);
 			} else {
@@ -2218,7 +2217,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		// this is an intercepted event being forwarded from mWorkspace;
 		// clicking anywhere on the workspace causes the customization drawer to
 		// slide down
-		//TODO 啥意思
+		// TODO 啥意思
 		showWorkspace(true);
 		return false;
 	}
@@ -2263,8 +2262,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * Event handler for the "grid" button that appears on the home screen,
-	 * which enters all apps mode.
-	 * 显示“所有程序”界面
+	 * which enters all apps mode. 显示“所有程序”界面
 	 * 
 	 * @param v
 	 *            The view that was clicked.
@@ -2275,6 +2273,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * “所有程序”按钮按下
+	 * 
 	 * @param v
 	 */
 	public void onTouchDownAllAppsButton(View v) {
@@ -2293,6 +2292,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * 根据包名跳转到系统自带的应用程序信息界面
+	 * 
 	 * @param componentName
 	 */
 	void startApplicationDetailsActivity(ComponentName componentName) {
@@ -2307,6 +2307,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * 卸载程序
+	 * 
 	 * @param appInfo
 	 */
 	void startApplicationUninstallActivity(ApplicationInfo appInfo) {
@@ -2391,6 +2392,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * 这么多if，想的太多了
+	 * 
 	 * @param folderIcon
 	 */
 	private void handleFolderClick(FolderIcon folderIcon) {
@@ -2557,7 +2559,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	/**
 	 * Opens the user folder described by the specified tag. The opening of the
 	 * folder is animated relative to the specified View. If the View is null,
-	 * no animation is played.
+	 * no animation is played. 打开文件夹。
 	 * 
 	 * @param folderInfo
 	 *            The FolderInfo describing the folder to open.
@@ -2583,6 +2585,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		growAndFadeOutFolderIcon(folderIcon);
 	}
 
+	/**
+	 * 关闭文件夹
+	 */
 	public void closeFolder() {
 		Folder folder = mWorkspace.getOpenFolder();
 		if (folder != null) {
@@ -2596,6 +2601,11 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 关闭文件夹
+	 * 
+	 * @param folder
+	 */
 	void closeFolder(Folder folder) {
 		folder.getInfo().opened = false;
 
@@ -2607,6 +2617,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		folder.animateClosed();
 	}
 
+	/*
+	 * 处理长按事件，按在空地方就选壁纸，按在item上就拖动
+	 */
 	public boolean onLongClick(View v) {
 		if (!isDraggingEnabled())
 			return false;
@@ -2665,8 +2678,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Returns the CellLayout of the specified container at the specified
-	 * screen.
+	 * 获取指定容器指定位置的CellLayout
 	 */
 	CellLayout getCellLayout(long container, int screen) {
 		if (container == LauncherSettings.Favorites.CONTAINER_HOTSEAT) {
@@ -2691,6 +2703,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 				|| (mOnResumeState == State.APPS_CUSTOMIZE);
 	}
 
+	/*
+	 * 是否是AllAppsButton的位置:一般是hotseat中间
+	 */
 	@Override
 	public boolean isAllAppsButtonRank(int rank) {
 		return mHotseat.isAllAppsButtonRank(rank);
@@ -2709,8 +2724,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		view.setPivotY(view.getHeight() / 2.0f);
 	}
 
+	/**
+	 * 在“所有程序”界面禁用壁纸
+	 */
 	void disableWallpaperIfInAllApps() {
-		// Only disable it if we are in all apps
 		if (isAllAppsVisible()) {
 			if (mAppsCustomizeTabHost != null
 					&& !mAppsCustomizeTabHost.isTransitioning()) {
@@ -2719,12 +2736,18 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 设置透明或者黑色背景，以显示或者遮盖壁纸？
+	 * 
+	 * @param workspace
+	 */
 	private void setWorkspaceBackground(boolean workspace) {
 		mLauncherView.setBackground(workspace ? mWorkspaceBackgroundDrawable
 				: mBlackBackgroundDrawable);
 	}
 
 	void updateWallpaperVisibility(boolean visible) {
+		// 使得系统背景显示在此应用的下层
 		int wpflags = visible ? WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER
 				: 0;
 		int curflags = getWindow().getAttributes().flags
@@ -3109,10 +3132,21 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 显示桌面
+	 * 
+	 * @param animated
+	 */
 	void showWorkspace(boolean animated) {
 		showWorkspace(animated, null);
 	}
 
+	/**
+	 * 显示桌面
+	 * 
+	 * @param animated
+	 * @param onCompleteRunnable
+	 */
 	void showWorkspace(boolean animated, Runnable onCompleteRunnable) {
 		if (mState != State.WORKSPACE) {
 			boolean wasInSpringLoadedMode = (mState == State.APPS_CUSTOMIZE_SPRING_LOADED);
@@ -3151,6 +3185,11 @@ public final class Launcher extends Activity implements View.OnClickListener,
 				AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
 	}
 
+	/**
+	 * 显示“所有程序”界面
+	 * 
+	 * @param animated
+	 */
 	void showAllApps(boolean animated) {
 		if (mState != State.WORKSPACE)
 			return;
@@ -3171,6 +3210,10 @@ public final class Launcher extends Activity implements View.OnClickListener,
 				AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
 	}
 
+	/**
+	 * 啥是SpringLoadedDragMode，从”所有程序“界面拖进来的时候的MODE，workspace会变小，放下后如果是卸载。
+	 * 那么最终会回到”所有程序“界面，如果是普通拖放，那么会回到桌面
+	 */
 	void enterSpringLoadedDragMode() {
 		if (isAllAppsVisible()) {
 			hideAppsCustomizeHelper(State.APPS_CUSTOMIZE_SPRING_LOADED, true,
@@ -3180,6 +3223,13 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 延迟退出SpringLoadedDragMode
+	 * 
+	 * @param successfulDrop
+	 * @param extendedDelay
+	 * @param onCompleteRunnable
+	 */
 	void exitSpringLoadedDragModeDelayed(final boolean successfulDrop,
 			boolean extendedDelay, final Runnable onCompleteRunnable) {
 		if (mState != State.APPS_CUSTOMIZE_SPRING_LOADED)
@@ -3188,6 +3238,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		mHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
+				// 如果是普通拖放，那么会回到桌面
 				if (successfulDrop) {
 					// Before we show workspace, hide all apps again because
 					// exitSpringLoadedDragMode made it visible. This is a bit
@@ -3203,6 +3254,9 @@ public final class Launcher extends Activity implements View.OnClickListener,
 				: EXIT_SPRINGLOADED_MODE_SHORT_TIMEOUT));
 	}
 
+	/**
+	 * 退出SpringLoadedDragMode
+	 */
 	void exitSpringLoadedDragMode() {
 		if (mState == State.APPS_CUSTOMIZE_SPRING_LOADED) {
 			final boolean animated = true;
@@ -3299,6 +3353,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	/**
 	 * Add an item from all apps or customize onto the given workspace screen.
 	 * If layout is null, add to the current screen.
+	 * 从其他位置向workspace添加item
 	 */
 	void addExternalItemToScreen(ItemInfo itemInfo, final CellLayout layout) {
 		if (!mWorkspace.addExternalItemToScreen(itemInfo, layout)) {
@@ -3595,6 +3650,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * Receives notifications when system dialogs are to be closed.
+	 * 关闭系统对话框的广播接收器
 	 */
 	private class CloseSystemDialogsIntentReceiver extends BroadcastReceiver {
 		@Override
@@ -3604,6 +3660,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
+	 * 重置widget的广播接收器。
 	 * Receives notifications whenever the appwidgets are reset.
 	 */
 	private class AppWidgetResetObserver extends ContentObserver {
@@ -3642,7 +3699,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Implementation of the method from LauncherModel.Callbacks.
+	 * 获取当前屏幕index
 	 */
 	public int getCurrentWorkspaceScreen() {
 		if (mWorkspace != null) {
@@ -3654,7 +3711,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * Refreshes the shortcuts shown on the workspace.
-	 * 
+	 * 刷新桌面上的快捷方式。。。
 	 * Implementation of the method from LauncherModel.Callbacks.
 	 */
 	public void startBinding() {
@@ -3751,6 +3808,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
+	 * 向桌面添加widget
 	 * Add the views for a widget to the workspace.
 	 * 
 	 * Implementation of the method from LauncherModel.Callbacks.
