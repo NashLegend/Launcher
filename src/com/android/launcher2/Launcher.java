@@ -657,7 +657,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		// return to the workspace. Clearing mAddInfo.container here fixes this
 		// issue
 		// 如果在“All Apps”界面添加完了一个快捷方式并且关闭了屏幕。
-		// 那么屏幕将不会回到workspace界面。所以resetAddInfo()
+		// 那么屏幕将不会回到workspace界面。所以resetAddInfo()。？
 		resetAddInfo();
 		return result;
 	}
@@ -773,7 +773,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	protected void onResume() {
 		super.onResume();
 
-		// Restore the previous launcher state
+		// 恢复以前的状态
 		if (mOnResumeState == State.WORKSPACE) {
 			showWorkspace(false);
 		} else if (mOnResumeState == State.APPS_CUSTOMIZE) {
@@ -785,7 +785,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		// all apps.
 		setWorkspaceBackground(mState == State.WORKSPACE);
 
-		// Process any items that were added while Launcher was away
+		// 处理当Launcher处于后台的时候被添加的item
 		InstallShortcutReceiver.flushInstallQueue(this);
 
 		mPaused = false;
@@ -797,9 +797,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 			mOnResumeNeedsLoad = false;
 		}
 
-		// Reset the pressed state of icons that were locked in the press state
-		// while activities
-		// were launching
+		// 重置那些当activities被启动时锁定为按下状态的icon的状态
 		if (mWaitingForResume != null) {
 			// Resets the previous workspace icon press state
 			mWaitingForResume.setStayPressed(false);
@@ -808,18 +806,11 @@ public final class Launcher extends Activity implements View.OnClickListener,
 			// Resets the previous all apps icon press state
 			mAppsCustomizeContent.resetDrawableState();
 		}
-		// It is possible that widgets can receive updates while launcher is not
-		// in the foreground.
-		// Consequently, the widgets will be inflated in the orientation of the
-		// foreground activity
-		// (framework issue). On resuming, we ensure that any widgets are
-		// inflated for the current
-		// orientation.
+		// widgets可以在Launcher处于后台的时候更新。因此widgets（在后台）会按照前台 activity
+		// (framework issue)方向inflate。所以在onResume的时候要确保每个widget都回复到Launcher的方向。
 		getWorkspace().reinflateWidgetsIfNecessary();
 
-		// Again, as with the above scenario, it's possible that one or more of
-		// the global icons
-		// were updated in the wrong orientation.
+		// 根据上面的理论，其他的global icons也有可能在错误的方向，所以要更新一次
 		updateGlobalIcons();
 	}
 
@@ -3352,8 +3343,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * Add an item from all apps or customize onto the given workspace screen.
-	 * If layout is null, add to the current screen.
-	 * 从其他位置向workspace添加item
+	 * If layout is null, add to the current screen. 从其他位置向workspace添加item
 	 */
 	void addExternalItemToScreen(ItemInfo itemInfo, final CellLayout layout) {
 		if (!mWorkspace.addExternalItemToScreen(itemInfo, layout)) {
@@ -3660,8 +3650,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * 重置widget的广播接收器。
-	 * Receives notifications whenever the appwidgets are reset.
+	 * 重置widget的广播接收器。 Receives notifications whenever the appwidgets are reset.
 	 */
 	private class AppWidgetResetObserver extends ContentObserver {
 		public AppWidgetResetObserver() {
@@ -3675,8 +3664,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * If the activity is currently paused, signal that we need to re-run the
-	 * loader in onResume.
+	 * 如果activity当前处于paused状态，那么将mOnResumeNeedsLoad设为true。 以便在onResume的时候重新加载。
 	 * 
 	 * This needs to be called from incoming places where resources might have
 	 * been loaded while we are paused. That is becaues the Configuration might
@@ -3710,9 +3698,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Refreshes the shortcuts shown on the workspace.
-	 * 刷新桌面上的快捷方式。。。
-	 * Implementation of the method from LauncherModel.Callbacks.
+	 * 刷新桌面上的快捷方式。继承自LauncherModel.Callbacks.
 	 */
 	public void startBinding() {
 		final Workspace workspace = mWorkspace;
@@ -3735,7 +3721,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Bind the items start-end from the list.
+	 * 添加shortcuts中指定部分的item到桌面
 	 * 
 	 * Implementation of the method from LauncherModel.Callbacks.
 	 */
@@ -3799,7 +3785,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Implementation of the method from LauncherModel.Callbacks.
+	 * 添加folder，但是并不添加到桌面上，添加到桌面是在bindItems上。继承自LauncherModel.Callbacks.
 	 */
 	public void bindFolders(HashMap<Long, FolderInfo> folders) {
 		setLoadOnResume();
@@ -3808,10 +3794,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * 向桌面添加widget
-	 * Add the views for a widget to the workspace.
-	 * 
-	 * Implementation of the method from LauncherModel.Callbacks.
+	 * 向桌面workspace添加widget。继承自LauncherModel.Callbacks接口.
 	 */
 	public void bindAppWidget(LauncherAppWidgetInfo item) {
 		setLoadOnResume();
@@ -3853,7 +3836,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Callback saying that there aren't any more items to bind.
+	 * 所有item绑定完毕
 	 * 
 	 * Implementation of the method from LauncherModel.Callbacks.
 	 */
@@ -3925,7 +3908,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 
 	/**
 	 * Runs a new animation that scales up icons that were added while Launcher
-	 * was in the background.
+	 * was in the background. 当Launcher在后台的时候添加了一个icon。现在执行scale up动画
 	 * 
 	 * @param immediate
 	 *            whether to run the animation or show the results immediately
@@ -3999,6 +3982,12 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}.start();
 	}
 
+	/*
+	 * 搜索发生改变，比如Google改成了百度
+	 * 
+	 * @see
+	 * com.android.launcher2.LauncherModel.Callbacks#bindSearchablesChanged()
+	 */
 	@Override
 	public void bindSearchablesChanged() {
 		boolean searchVisible = updateGlobalSearchIcon();
@@ -4010,9 +3999,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Add the icons for all apps.
-	 * 
-	 * Implementation of the method from LauncherModel.Callbacks.
+	 * 向“所有程序”界面添加item. 来自LauncherModel.Callbacks接口
 	 */
 	public void bindAllApplications(final ArrayList<ApplicationInfo> apps) {
 		Runnable setAllAppsRunnable = new Runnable() {
@@ -4045,7 +4032,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * A package was installed.
+	 * 添加刚刚被安装的程序
 	 * 
 	 * Implementation of the method from LauncherModel.Callbacks.
 	 */
@@ -4058,7 +4045,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * A package was updated.
+	 * 更新一个刚刚被update的包，比如说升级了……
 	 * 
 	 * Implementation of the method from LauncherModel.Callbacks.
 	 */
@@ -4074,7 +4061,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * A package was uninstalled.
+	 * 删除被卸载的程序
 	 * 
 	 * Implementation of the method from LauncherModel.Callbacks.
 	 */
@@ -4093,7 +4080,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * A number of packages were updated.
+	 * 更新插件和快捷方式列表
 	 */
 	public void bindPackagesUpdated() {
 		if (mAppsCustomizeContent != null) {
@@ -4101,6 +4088,12 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	/**
+	 * 返回Launcher在四个重力方向上的显示方向
+	 * 
+	 * @param configOri
+	 * @return
+	 */
 	private int mapConfigurationOriActivityInfoOri(int configOri) {
 		final Display d = getWindowManager().getDefaultDisplay();
 		int naturalOri = Configuration.ORIENTATION_LANDSCAPE;
@@ -4115,6 +4108,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		case Surface.ROTATION_270:
 			// We are currently in the other basic orientation to the natural
 			// orientation
+			// 切换方向……
 			naturalOri = (configOri == Configuration.ORIENTATION_LANDSCAPE) ? Configuration.ORIENTATION_PORTRAIT
 					: Configuration.ORIENTATION_LANDSCAPE;
 			break;
@@ -4167,6 +4161,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 		}
 	}
 
+	// 下面的函数都是处理第一次进入时显示cling的方法
 	/* 是否显示第一次进入的帮助提示页面 */
 	private boolean isClingsEnabled() {
 		// disable clings when running in a test harness
