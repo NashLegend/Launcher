@@ -30,7 +30,7 @@ import java.util.ListIterator;
  * starving the thread.
  *
  * This class is fifo.
- * 先进先出执行的队列
+ * 先进先出执行任务的队列
  */
 public class DeferredHandler {
     private LinkedList<Pair<Runnable, Integer>> mQueue = new LinkedList<Pair<Runnable, Integer>>();

@@ -63,19 +63,28 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Maintains in-memory state of the Launcher. It is expected that there should
- * be only one LauncherModel object held in a static. Also provide APIs for
- * updating the database state for the Launcher.
+ * Launcher里面的数据，以及处理数据操作
  */
 public class LauncherModel extends BroadcastReceiver {
 	static final boolean DEBUG_LOADERS = false;
 	static final String TAG = "Launcher.Model";
 
-	private static final int ITEMS_CHUNK = 6; // batch size for the workspace
-												// icons
+	/**
+	 * bindItems()，每次bind数量6,应该是为了防止一次加载太多卡界面。分批放到队列里面执行
+	 */
+	private static final int ITEMS_CHUNK = 6;
+	/**
+	 * !Environment.isExternalStorageEmulated()。？？？
+	 */
 	private final boolean mAppsCanBeOnExternalStorage;
-	private int mBatchSize; // 0 is all apps at once
-	private int mAllAppsLoadDelay; // milliseconds between batches
+	/**
+	 * 一次读取数量，0代表一次全部加载（就是0）
+	 */
+	private int mBatchSize;
+	/**
+	 * 两次程序加载之间的间隔
+	 */
+	private int mAllAppsLoadDelay;
 
 	private final LauncherApplication mApp;
 	private final Object mLock = new Object();
@@ -83,11 +92,8 @@ public class LauncherModel extends BroadcastReceiver {
 	private LoaderTask mLoaderTask;
 	private boolean mIsLoaderTaskRunning;
 
-	// Specific runnable types that are run on the main thread deferred handler,
-	// this allows us to
-	// clear all queued binding runnables when the Launcher activity is
-	// destroyed.
-	private static final int MAIN_THREAD_NORMAL_RUNNABLE = 0;
+	// 跑在主线程deferred handler上的runnable类型，在Launcher Activity销毁时清除此类型的任务队列。
+	private static final int MAIN_THREAD_NORMAL_RUNNABLE = 0;//从来没用过
 	private static final int MAIN_THREAD_BINDING_RUNNABLE = 1;
 
 	private static final HandlerThread sWorkerThread = new HandlerThread(
@@ -101,6 +107,8 @@ public class LauncherModel extends BroadcastReceiver {
 	// We start off with everything not loaded. After that, we assume that
 	// our monitoring of the package manager provides all updates and we never
 	// need to do a requery. These are only ever touched from the loader thread.
+	// 刚刚进入程序时什么都没有加载，我们认为程序之后会加载到所有程序的更新等等。
+	// 然后不会再去查询查找程序。只会在loader线程中被修改为true.
 	private boolean mWorkspaceLoaded;
 	private boolean mAllAppsLoaded;
 
@@ -130,6 +138,7 @@ public class LauncherModel extends BroadcastReceiver {
 	// sBgItemsIdMap maps *all* the ItemInfos (shortcuts, folders, and widgets)
 	// created by
 	// LauncherModel to their ids
+	// LauncherModel创建的所有itemInfos都在这里
 	static final HashMap<Long, ItemInfo> sBgItemsIdMap = new HashMap<Long, ItemInfo>();
 
 	// sBgWorkspaceItems is passed to bindItems, which expects a list of all
@@ -248,10 +257,9 @@ public class LauncherModel extends BroadcastReceiver {
 	}
 
 	/**
-	 * ..........
-	 * Disconnect the callbacks and drawables associated with ItemInfos
-	 * on the workspace to prevent leaking Launcher activities on orientation
-	 * change.
+	 * .......... Disconnect the callbacks and drawables associated with
+	 * ItemInfos on the workspace to prevent leaking Launcher activities on
+	 * orientation change.
 	 */
 	public void unbindItemInfosAndClearQueuedBindRunnables() {
 		if (sWorkerThread.getThreadId() == Process.myTid()) {
