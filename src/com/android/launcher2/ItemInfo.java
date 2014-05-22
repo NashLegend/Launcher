@@ -47,8 +47,10 @@ class ItemInfo {
 
 	/**
 	 * 放这个item的窗口，对于桌面来说，这个是
-	 * {@link LauncherSettings.Favorites#CONTAINER_DESKTOP}。。。。。。。。。。
-	 * 对于“所有程序”界面来说是 {@link #NO_ID} (因为不用保存在数据库里)。。。。。。。。。。。 。。。 。。。。。。。。
+	 * {@link LauncherSettings.Favorites#CONTAINER_DESKTOP}
+	 * 
+	 * 对于“所有程序”界面来说是 {@link #NO_ID} (因为不用保存在数据库里)
+	 * 
 	 * 对于用户文件夹来说是文件夹id
 	 */
 	long container = NO_ID;
