@@ -223,8 +223,7 @@ public class LauncherModel extends BroadcastReceiver {
 
     /**
      * Runs the specified runnable immediately if called from the main thread,
-     * otherwise it is posted on the main thread handler.
-     * 在主线程上执行Runnable
+     * otherwise it is posted on the main thread handler. 在主线程上执行Runnable
      */
     private void runOnMainThread(Runnable r) {
         runOnMainThread(r, 0);
@@ -549,8 +548,7 @@ public class LauncherModel extends BroadcastReceiver {
 
     /**
      * Returns an ItemInfo array containing all the items in the LauncherModel.
-     * The ItemInfo.id is not set through this function.
-     * 返回所有ItemInfo.
+     * The ItemInfo.id is not set through this function. 返回所有ItemInfo.
      */
     static ArrayList<ItemInfo> getItemsInLocalCoordinates(Context context) {
         ArrayList<ItemInfo> items = new ArrayList<ItemInfo>();
@@ -872,7 +870,7 @@ public class LauncherModel extends BroadcastReceiver {
 
     /**
      * Call from the handler for ACTION_PACKAGE_ADDED, ACTION_PACKAGE_REMOVED
-     * and ACTION_PACKAGE_CHANGED.
+     * and ACTION_PACKAGE_CHANGED. 监听程序安装、卸载、改变。
      */
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -915,11 +913,12 @@ public class LauncherModel extends BroadcastReceiver {
             if (op != PackageUpdatedTask.OP_NONE) {
                 enqueuePackageUpdated(new PackageUpdatedTask(op,
                         new String[] {
-                            packageName
+                                packageName
                         }));
             }
 
         } else if (Intent.ACTION_EXTERNAL_APPLICATIONS_AVAILABLE.equals(action)) {
+            // SD卡加载后
             // First, schedule to add these apps back in.
             String[] packages = intent
                     .getStringArrayExtra(Intent.EXTRA_CHANGED_PACKAGE_LIST);
@@ -929,6 +928,7 @@ public class LauncherModel extends BroadcastReceiver {
             startLoaderFromBackground();
         } else if (Intent.ACTION_EXTERNAL_APPLICATIONS_UNAVAILABLE
                 .equals(action)) {
+            // SD卡卸载后
             String[] packages = intent
                     .getStringArrayExtra(Intent.EXTRA_CHANGED_PACKAGE_LIST);
             enqueuePackageUpdated(new PackageUpdatedTask(
@@ -956,6 +956,7 @@ public class LauncherModel extends BroadcastReceiver {
                 .equals(action)
                 || SearchManager.INTENT_ACTION_SEARCHABLES_CHANGED
                         .equals(action)) {
+            // 搜索发生变化，比如百度代替了google.如何做到的？
             if (mCallbacks != null) {
                 Callbacks callbacks = mCallbacks.get();
                 if (callbacks != null) {
@@ -1002,7 +1003,7 @@ public class LauncherModel extends BroadcastReceiver {
             Callbacks callbacks = mCallbacks.get();
             if (callbacks != null) {
                 // Only actually run the loader if they're not paused.
-                if (!callbacks.setLoadOnResume()) {
+                if (!callbacks.setLoadOnResume()) { 
                     runLoader = true;
                 }
             }
@@ -2233,6 +2234,7 @@ public class LauncherModel extends BroadcastReceiver {
         }
     }
 
+    // 批量更新Package
     void enqueuePackageUpdated(PackageUpdatedTask task) {
         sWorker.post(task);
     }
@@ -2893,6 +2895,9 @@ public class LauncherModel extends BroadcastReceiver {
         }
     };
 
+    /**
+     * 一堆log
+     */
     public void dumpState() {
         Log.d(TAG, "mCallbacks=" + mCallbacks);
         ApplicationInfo.dumpApplicationInfoList(TAG, "mAllAppsList.data",

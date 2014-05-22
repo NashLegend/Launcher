@@ -4339,7 +4339,7 @@ public final class Launcher extends Activity implements View.OnClickListener,
 	}
 
 	/**
-	 * Prints out out state for debugging.
+	 * 一堆state的log
 	 */
 	public void dumpState() {
 		Log.d(TAG, "BEGIN launcher2 dump state for launcher " + this);
